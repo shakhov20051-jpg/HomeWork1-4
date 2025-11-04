@@ -1,16 +1,18 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
-    [SerializeField] private float _speed = 10f;
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private Transform _head;
     [SerializeField] private Animator _animatorFoot;
     [SerializeField] private Animator _animatorSquat; 
     [SerializeField] private Transform _pointCamera;
 
-    public float Speed => _speed;
+    // скорость 
+    private float _speed = 10f;
+ //   private int _health = 10;
 
     // движение 
     private float _inputH;
@@ -37,6 +39,13 @@ public class PlayerCharacter : MonoBehaviour
     // приседание 
     private bool _isCurrentSquat = false;
 
+    private Coroutine _coroutine;
+
+    public void Init(float speed)
+    {
+        _speed = speed;
+    }
+
     private void Start()
     {
         _gravity = Physics.gravity.y * _currentGravityMultiplier;
@@ -45,14 +54,15 @@ public class PlayerCharacter : MonoBehaviour
         camera.localPosition = Vector3.zero;
         camera.localRotation = Quaternion.identity;
     }
-
     void Update()
     {
+        if (_characterController.enabled == false) return;
         CalculationTimeCoyote();
         CalculationGravity();
         Move();
         ChangeAnimation();
     }
+
 
     private void CalculationTimeCoyote()
     {
@@ -62,6 +72,25 @@ public class PlayerCharacter : MonoBehaviour
         }
         else if (_timeFly > 0) _timeFly = 0;
     }
+
+
+    public void Respawn(Vector3 spawnPosition)
+    {
+
+        if (_coroutine != null) StopCoroutine(_coroutine);
+        _coroutine = StartCoroutine(SetPlayerNewPosition(spawnPosition));
+    }
+
+    private IEnumerator SetPlayerNewPosition(Vector3 spawnPosition)
+    {
+        _characterController.enabled = false;
+        transform.position = spawnPosition;
+        yield return new WaitForSeconds (0.3f);
+        _characterController.enabled = true;
+        _coroutine = null;
+    }
+
+
     private void CalculationGravity()
     {
         _ySpeed += _gravity * Time.deltaTime;

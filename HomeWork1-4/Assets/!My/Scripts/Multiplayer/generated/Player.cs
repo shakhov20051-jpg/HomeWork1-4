@@ -11,34 +11,40 @@ public partial class Player : Schema {
 	[Type(0, "number")]
 	public float speed = default(float);
 
-	[Type(1, "number")]
-	public float px = default(float);
+	[Type(1, "int8")]
+	public sbyte hpMax = default(sbyte);
 
-	[Type(2, "number")]
-	public float py = default(float);
+	[Type(2, "int8")]
+	public sbyte hpCurrent = default(sbyte);
 
 	[Type(3, "number")]
-	public float pz = default(float);
+	public float px = default(float);
 
 	[Type(4, "number")]
-	public float vx = default(float);
+	public float py = default(float);
 
 	[Type(5, "number")]
-	public float vy = default(float);
+	public float pz = default(float);
 
 	[Type(6, "number")]
-	public float vz = default(float);
+	public float vx = default(float);
 
 	[Type(7, "number")]
-	public float rx = default(float);
+	public float vy = default(float);
 
 	[Type(8, "number")]
+	public float vz = default(float);
+
+	[Type(9, "number")]
+	public float rx = default(float);
+
+	[Type(10, "number")]
 	public float ry = default(float);
 
-	[Type(9, "boolean")]
+	[Type(11, "boolean")]
 	public bool fly = default(bool);
 
-	[Type(10, "boolean")]
+	[Type(12, "boolean")]
 	public bool sq = default(bool);
 }
 

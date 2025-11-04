@@ -37,6 +37,7 @@ public class EnemyCharacter : MonoBehaviour
     }
 
 
+
     private void SmoothMove()
     {
         if (_velocityMagnitude > 0.1f)
@@ -89,4 +90,10 @@ public class EnemyCharacter : MonoBehaviour
         return angle;
     }
 
+
+    public void Respawn(Vector3 postion)
+    {
+        return;
+        transform.position = postion;
+    }
 }

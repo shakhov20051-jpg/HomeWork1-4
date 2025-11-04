@@ -7,10 +7,13 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private EnemyCharacter _enemyCharacter;
+    [SerializeField] private Health _health;
     [SerializeField] private Animator _animatorFoot;
     [SerializeField] private Animator _animatorSquat;
     [SerializeField] private Animator _animatorGun;
     [SerializeField] private Bullet _bulletPrefab;
+    [SerializeField] private int _damage = 1;
+    [SerializeField] private GameObject _dieObject;
 
     private List<float> _receiveTimeInterval = new();
     private float _lastReceiveTime = 0;
@@ -19,12 +22,16 @@ public class EnemyController : MonoBehaviour
     private bool _isCurrentSquat = false;
     private Vector3 _velocity = Vector3.zero;
     private float _maxSpeed = 10f;
+    private string _sessionId;
 
 
-    public void Init(Player player)
+    public void Init(string sessionId, Player player)
     {
+        _sessionId = sessionId;
         _player = player;
         _maxSpeed = _player.speed;
+        _health.SetMax(_player.hpMax);
+        _health.SetCurrent(_player.hpCurrent);
 
         _isFly = _player.fly;
         _animatorFoot.SetBool("Grounded", !_isFly);
@@ -37,6 +44,17 @@ public class EnemyController : MonoBehaviour
         _player.OnChange += OnChange;
     }
 
+    
+    public void SendDamage(int damage)
+    {
+        Dictionary<string, object> data = new Dictionary<string, object>()
+        {
+            { "id", _sessionId },
+            { "value", damage },
+        };
+        MultiplayerManager.Instance.SendMessageToServer("damage", data);
+    }
+   
 
     private void Start()
     {
@@ -48,10 +66,18 @@ public class EnemyController : MonoBehaviour
         _animatorFoot.SetFloat("Speed", _velocity.magnitude / _maxSpeed); 
     }
 
+
+    public void Respawn(CharacterPosition newPosition)
+    {
+        Vector3 position = new Vector3(newPosition.px, newPosition.py, newPosition.pz);
+        _enemyCharacter.Respawn(position);
+    }
+
+
     public void Shoot(in ShootInfo info)
     {
         _animatorGun.SetTrigger("Shoot");
-        Instantiate(_bulletPrefab).Init(new Vector3(info.px, info.py, info.pz), new Vector3(info.dx, info.dy, info.dz));
+        Instantiate(_bulletPrefab).Init(new Vector3(info.px, info.py, info.pz), new Vector3(info.dx, info.dy, info.dz), _damage);
     }
 
     public void OnChange(List<DataChange> changes)
@@ -67,6 +93,10 @@ public class EnemyController : MonoBehaviour
         {
             switch (dataChange.Field)
             {
+                case "hpCurrent":
+                        _health.SetCurrent((sbyte)dataChange.Value);
+                        // if ((sbyte)dataChange.Value <= 0) _dieObject.SetActive(true); // temp for test
+                        return;
                 case "px":
                     newPosition.x = (float)dataChange.Value;
                     break;
