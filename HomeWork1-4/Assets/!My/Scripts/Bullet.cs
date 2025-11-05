@@ -29,7 +29,6 @@ public class Bullet : MonoBehaviour
         if(collision.collider.TryGetComponent<LimbPart> (out LimbPart limbPart))
         {
             limbPart.TakeDamager(_damage);
-            // health.ApplyDamage(_damage);
         }
     }
 }

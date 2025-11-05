@@ -83,9 +83,8 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
     private void CreatePlayer(string key, Player player)
     {
-        var position = new Vector3(player.px, player.py, player.pz);
-        // PlayerController playerPrefab = Instantiate(_player, position, Quaternion.identity);
-         playerPrefab = Instantiate(_player, position, Quaternion.identity);
+        Vector3 spawnPosition = _targetSpawnController.GetSpawnPositions().position;
+        playerPrefab = Instantiate(_player, spawnPosition, Quaternion.identity);
         playerPrefab.Init(key, _targetSpawnController);
         player.OnChange += playerPrefab.OnChange;
     }
@@ -94,8 +93,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     {
         var position = new Vector3(player.px, player.py, player.pz);
         EnemyController enemy = Instantiate(_enemy, position, Quaternion.identity);
-        enemy.Init(key, player);
-        
+        enemy.Init(key, player);        
         _enemies.Add(key, enemy);
     }
 

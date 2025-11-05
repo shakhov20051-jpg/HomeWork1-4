@@ -8,9 +8,9 @@ export class Player extends Schema {
     @type("int8") hpMax = 0;
     @type("int8") hpCurrent = 0;
 
-    @type("number") px = Math.floor(Math.random() * 30) - 15;
+    @type("number") px = 0;
     @type("number") py = 0;
-    @type("number") pz = Math.floor(Math.random() * 30) - 15;
+    @type("number") pz = 0;
     
     @type("number") vx = 0;
     @type("number") vy = 0;
@@ -26,6 +26,7 @@ export class Player extends Schema {
     
     // @type("int8") scoreDie = 0; 
     // @type("int8") scoreWin = 0; 
+    // @type("int8") numWeapon = 0; 
 }
 
 export class State extends Schema {
@@ -109,8 +110,6 @@ export class StateHandlerRoom extends Room<State> {
 
                 const deadClient = this.clients.find(c => c.sessionId === data.id);
                 if (deadClient)  deadClient.send("PlayersPositions", positions);
-
-                this.broadcast("Die", { id: data.id });
             }
         });
 
@@ -123,7 +122,7 @@ export class StateHandlerRoom extends Room<State> {
     }
 
     onJoin (client: Client, data: any) {
-        client.send("hello", "world");
+
         this.state.createPlayer(client.sessionId, data);
     }
 

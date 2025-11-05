@@ -38,8 +38,8 @@ public class PlayerController : MonoBehaviour
     {
         _targetSpawnController = targetSpawnController;
         _idSession = idSession;
-        Vector3 spawnPosition = _targetSpawnController.GetSpawnPositions().position;
-        SendMessageSpawn(spawnPosition);
+        
+        // SendMessageSpawn(spawnPosition);
     }
 
 
@@ -72,7 +72,6 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(3f);
         SendMessageSpawn(spawnPosition);
-
     }
 
     private void SendMessageSpawn(Vector3 spawnPosition)
